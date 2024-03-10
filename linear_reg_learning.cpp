@@ -1,10 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+//try same in python also
 #define data_count 9
 #define alpha 0.0001 //learning rate
-#define h 0.0000001 //dw and db
-//#define ok_err 0.001 //passable error
+#define ok_err 0.00000000001 //passable error
 
 double w = 0;
 double b = 0;
@@ -22,13 +21,19 @@ double j_wb(double w, double b){
 }
 
 double derv_w_j_wb(double w, double b){
-    double partial_derv = (j_wb(w + h, b) - j_wb(w, b)) / h;
-    return partial_derv;
+    double delta_sum = 0;
+    for(int i = 0; i < data_count; i++){
+        delta_sum += ((((w * data_x[i]) + b) - data_y[i]) * data_x[i]);
+    }
+    return (delta_sum / data_count);
 }
 
 double derv_b_j_wb(double w, double b){
-    double partial_derv = (j_wb(w , b + h) - j_wb(w, b)) / h;
-    return partial_derv;
+    double delta_sum = 0;
+    for(int i = 0; i < data_count; i++){
+        delta_sum += (((w * data_x[i]) + b) - data_y[i]);
+    }
+    return (delta_sum / data_count);
 }
 
 void minimize_j_wb(){
@@ -41,7 +46,7 @@ void minimize_j_wb(){
         w = w - err_w;
         b = b - err_b;
         //cout << err_w <<" " <<err_b <<endl;
-    }while(abs(err_w) > 0.00000000001 && abs(err_b) > 0.00000000001);
+    }while(abs(err_w) > ok_err && abs(err_b) > ok_err);
 }
 
 int main(){
